@@ -38,46 +38,58 @@ class Calculator:
         return sum_records
 
 class CashCalculator(Calculator):
-    EURO_RATE = 80
-    USD_RATE = 70
+    EURO_RATE = float(80)
+    USD_RATE = float(70)
     
     def get_today_cash_remained(self, currency):
         if currency == "rub":
-            remainder = round((self.limit - super().get_today_stats()), 2)
+            remainder = self.limit - super().get_today_stats()
             if remainder < self.limit:
-                return f"На сегодня осталось {remainder} руб"
+                return f"На сегодня осталось {round(remainder, 2)} руб"
             elif remainder == self.limit:
                 return ("Денег нет, держись")
             elif remainder > self.limit:
-                return f"Денег нет, держись: твой долг - {remainder} руб"
+                return f"Денег нет, держись: твой долг - {round(remainder, 2)} руб"
         
         elif currency == "eur":
-            remainder = round((self.limit - super().get_today_stats()/self.EURO_RATE), 2)
+            remainder = self.limit - super().get_today_stats()
             if remainder < self.limit:
-                return f"На сегодня осталось {remainder} Euro"
+                return f"На сегодня осталось {round(remainder/self.EURO_RATE, 2)} EURO"
             elif remainder == self.limit:
                 return ("Денег нет, держись")
             elif remainder > self.limit:
-                return f"Денег нет, держись: твой долг - {remainder} Euro"
-        
+                return f"Денег нет, держись: твой долг - {abs(remainder)} EURO"
         elif currency == "usd":
-            remainder = round(((self.limit - super().get_today_stats())/self.USD_RATE), 2)
+            remainder = self.limit - super().get_today_stats()
             if remainder < self.limit:
-                return f"На сегодня осталось {remainder} USD"
+                return f"На сегодня осталось {round(remainder/self.USD_RATE, 2)} USD"
             elif remainder == self.limit:
                 return ("Денег нет, держись")
             elif remainder > self.limit:
-                return f"Денег нет, держись: твой долг - {remainder} USD"
+                return f"Денег нет, держись: твой долг - {abs(remainder)} USD"
            
 class CaloriesCalculator(Calculator):
     def get_calories_remained(self):
-        sum_today = super().get_today_stats()
-        remainder = self.limit - sum_today
+        remainder = super().get_today_stats()
         if remainder < self.limit:
             return (f"Сегодня можно съесть что-нибудь еще,"
-            f"но с общей калорийностью не более {remainder} кКал")
-        if remainder >= self.limit:
+            f"но с общей калорийностью не более {self.limit - remainder} кКал")
+        else:
             return ("Хватит есть!")
+
+cash_calculator = CashCalculator(1000)
         
+
+cash_calculator.add_record(Record(amount=145, comment="кофе")) 
+
+cash_calculator.add_record(Record(amount=300, comment="Серёге за обед"))
+
+cash_calculator.add_record(Record(amount=3000, comment="бар в Танин др", date="08.11.2019"))
+                
+print(cash_calculator.get_today_cash_remained("rub"))
+
+r1=CaloriesCalculator(100)
+r1.add_record(Record(amount=300, comment="fdg"))
+print(r1.get_calories_remained)
 
     
