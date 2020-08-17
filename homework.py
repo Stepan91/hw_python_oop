@@ -3,11 +3,12 @@ import datetime as dt
 class Record:
     def __init__(self, amount, comment, date = None):
         self.amount = amount
-        if date is None:
-            date = dt.datetime.now().strftime('%d.%m.%Y')
-        else:
-            date = dt.datetime().strftime('%d.%m.%Y')
         self.comment = comment
+        if date is None:
+            self.date = dt.date.today()
+        else:
+            self.date = dt.datetime.strptime(date, '%d.%m.%Y')
+        
         
 
 class Calculator:                       
@@ -17,31 +18,32 @@ class Calculator:
     
     def add_record(self, record):
         self.records.append(record)
+        return self.records
     
     def get_today_stats(self):
         date_now = dt.datetime.now().date()
         sum_records = 0
-        for i in self.records:
-            if i.date == date_now:
-                sum_records += i.amount
+        for record in self.records:
+            if record.date == date_now:
+                sum_records += record.amount
         return sum_records
     
     def get_week_stats(self):
         date_now = dt.datetime.now().date()
         date_week = date_now - dt.timedelta(6)
         sum_records = 0
-        for i in self.records: 
-            if i.date >= date_week:
-                sum_records += i.amount
+        for record in self.records: 
+            if record.date >= date_week:
+                sum_records += record.amount
         return sum_records
 
 class CashCalculator(Calculator):
-    EUR_RATE = 80
+    EURO_RATE = 80
     USD_RATE = 70
     
     def get_today_cash_remained(self, currency):
-        if currency == "rub" and self.records == dt.datetime.now().date():
-            remainder = self.limit - super().get_week_stats()
+        if currency == "rub":
+            remainder = round((self.limit - super().get_today_stats()), 2)
             if remainder < self.limit:
                 return f"На сегодня осталось {remainder} руб"
             elif remainder == self.limit:
@@ -49,8 +51,8 @@ class CashCalculator(Calculator):
             elif remainder > self.limit:
                 return f"Денег нет, держись: твой долг - {remainder} руб"
         
-        elif currency == "eur" and self.records == dt.datetime.now().date():
-            remainder = (self.limit - super().get_week_stats())/self.EUR_RATE
+        elif currency == "eur":
+            remainder = round((self.limit - super().get_today_stats()/self.EURO_RATE), 2)
             if remainder < self.limit:
                 return f"На сегодня осталось {remainder} Euro"
             elif remainder == self.limit:
@@ -58,8 +60,8 @@ class CashCalculator(Calculator):
             elif remainder > self.limit:
                 return f"Денег нет, держись: твой долг - {remainder} Euro"
         
-        elif currency == "usd" and self.records == dt.datetime.now().date():
-            remainder = (self.limit - super().get_week_stats())/self.USD_RATE
+        elif currency == "usd":
+            remainder = round(((self.limit - super().get_today_stats())/self.USD_RATE), 2)
             if remainder < self.limit:
                 return f"На сегодня осталось {remainder} USD"
             elif remainder == self.limit:
@@ -69,7 +71,8 @@ class CashCalculator(Calculator):
            
 class CaloriesCalculator(Calculator):
     def get_calories_remained(self):
-        remainder = self.limit - super().get_week_stats()
+        sum_today = super().get_today_stats()
+        remainder = self.limit - sum_today
         if remainder < self.limit:
             return (f"Сегодня можно съесть что-нибудь еще,"
             f"но с общей калорийностью не более {remainder} кКал")
