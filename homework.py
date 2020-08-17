@@ -78,18 +78,4 @@ class CaloriesCalculator(Calculator):
             return ("Хватит есть!")
 
 cash_calculator = CashCalculator(1000)
-        
-
-cash_calculator.add_record(Record(amount=145, comment="кофе")) 
-
-cash_calculator.add_record(Record(amount=300, comment="Серёге за обед"))
-
-cash_calculator.add_record(Record(amount=3000, comment="бар в Танин др", date="08.11.2019"))
-                
-print(cash_calculator.get_today_cash_remained("rub"))
-
-r1=CaloriesCalculator(100)
-r1.add_record(Record(amount=300, comment="fdg"))
-print(r1.get_calories_remained)
-
     
