@@ -29,8 +29,7 @@ class Calculator:
         date_week = dt.date.today() - dt.timedelta(days=6)
         sum_records = 0
         for record in self.records: 
-            if (record.date >= date_week) and 
-            (record.date <= dt.date.today()):
+            if (record.date >= date_week)and(record.date <= dt.date.today()):
                 sum_records += record.amount
         return sum_records
 
