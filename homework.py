@@ -29,7 +29,8 @@ class Calculator:
         date_week = dt.date.today() - dt.timedelta(days=6)
         sum_records = 0
         for record in self.records: 
-            if (record.date >= date_week) and (record.date <= date_week):
+            if (record.date >= date_week) and 
+            (record.date <= dt.date.today()):
                 sum_records += record.amount
         return sum_records
 
@@ -46,45 +47,43 @@ class CashCalculator(Calculator):
         }
         if currency == "rub":
             if remainder > 0:
-                return f"На сегодня осталось {round(remainder, 2)} {rates[currency]}"
+                return ("На сегодня осталось "
+                f"{round(remainder, 2)} {rates[currency]}")
             elif remainder == 0:
                 return ("Денег нет, держись")
             elif remainder < 0:
-                return f"Денег нет, держись: твой долг - {round(abs(remainder), 2)} {rates[currency]}"
+                return ("Денег нет, держись: твой долг - "
+                f"{round(abs(remainder), 2)} {rates[currency]}")
         elif currency == "eur":
             if remainder > 0:
-                return f"На сегодня осталось {round(remainder/self.EURO_RATE, 2)} {rates[currency]}"
+                return ("На сегодня осталось" 
+                f"{round(remainder/self.EURO_RATE, 2)} {rates[currency]}")
             elif remainder == 0:
                 return ("Денег нет, держись")
             elif remainder < 0:
-                return f"Денег нет, держись: твой долг - {round(abs(remainder), 2)} {rates[currency]}"
+                return ("Денег нет, держись: твой долг - "
+                f"{round(abs(remainder/self.EURO_RATE,), 2)} {rates[currency]}")
         elif currency == "usd":
             if remainder > 0:
-                return f"На сегодня осталось {round(remainder/self.USD_RATE, 2)} {rates[currency]}"
+                return ("На сегодня осталось "
+                f"{round(remainder/self.USD_RATE, 2)} {rates[currency]}")
             elif remainder == 0:
                 return ("Денег нет, держись")
             elif remainder < 0:
-                return f"Денег нет, держись: твой долг - {round(abs(remainder), 2)} {rates[currency]}"
+                return ("Денег нет, держись: твой долг - "
+                f"{round(abs(remainder/self.USD_RATE), 2)} {rates[currency]}")
            
 class CaloriesCalculator(Calculator):
+      
     def get_calories_remained(self):
-        remainder = self.get_today_stats()
-        diff = self.limit - remainder
-        if remainder < self.limit:
-            return (f"Сегодня можно съесть что-нибудь еще,"
-            f"но с общей калорийностью не более {diff} кКал")
-        if remainder >= self.limit:
+        remainder_cal = self.limit - self.get_today_stats()
+        if remainder_cal > 0:
+            return (f"Сегодня можно съесть что-нибудь ещё, "
+            f"но с общей калорийностью не более {remainder_cal} кКал")
+        else:
             return ("Хватит есть!")
 
-
-cash_calculator = CashCalculator(100)
         
-# дата в параметрах не указана, 
-# так что по умолчанию к записи должна автоматически добавиться сегодняшняя дата
-cash_calculator.add_record(Record(amount=145, comment="кофе")) 
-# и к этой записи тоже дата должна добавиться автоматически
-cash_calculator.add_record(Record(amount=300, comment="Серёге за обед"))
-# а тут пользователь указал дату, сохраняем её
-cash_calculator.add_record(Record(amount=3000, comment="бар в Танин др", date="08.11.2019"))
-                
-print(cash_calculator.get_today_cash_remained("rub"))
+
+
+
