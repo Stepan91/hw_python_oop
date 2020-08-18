@@ -29,7 +29,7 @@ class Calculator:
         date_week = dt.date.today() - dt.timedelta(days=6)
         sum_records = 0
         for record in self.records: 
-            if (record.date >= date_week)and(record.date <= dt.date.today()):
+            if (record.date >= date_week) and (record.date <= dt.date.today()):
                 sum_records += record.amount
         return sum_records
 
@@ -55,7 +55,7 @@ class CashCalculator(Calculator):
                 f"{round(abs(remainder), 2)} {rates[currency]}")
         elif currency == "eur":
             if remainder > 0:
-                return ("На сегодня осталось" 
+                return ("На сегодня осталось " 
                 f"{round(remainder/self.EURO_RATE, 2)} {rates[currency]}")
             elif remainder == 0:
                 return ("Денег нет, держись")
