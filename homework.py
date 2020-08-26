@@ -22,23 +22,18 @@ class Calculator:
     def add_record(self, record):
         self.records.append(record)
 
-    # метод-то я создал, а вот как его применить - не знаю
-    # без создания цикла в функциях-счетчиках нельзя пройтись по датам
-    def sum_amounts(self):
-        sum(record_i.amount
-            for record_i in self.records)
-
-    def get_today_stats(self):
+    def sum_amounts(self, date_begin, date_end):
         return sum(record_i.amount
                    for record_i in self.records if
-                   record_i.date == self.today)
+                   date_begin >= record_i.date >= date_end)
+
+    def get_today_stats(self):
+        date_end = self.today - dt.timedelta(days=0)
+        return self.sum_amounts(self.today, date_end)
 
     def get_week_stats(self):
-        date_week = dt.date.today() - dt.timedelta(days=6)
-        sum_records = sum(record_i.amount
-                          for record_i in self.records if
-                          self.today >= record_i.date >= date_week)
-        return sum_records
+        date_week = self.today - dt.timedelta(days=6)
+        return self.sum_amounts(self.today, date_week)
 
     def remainder_on(self):
         return self.limit - self.get_today_stats()
@@ -55,14 +50,16 @@ class CashCalculator(Calculator):
             "eur": (self.EURO_RATE, "Euro"),
             "usd": (self.USD_RATE, "USD")
             }
+        money, rate = (rates[currency][0], rates[currency][1])
+        foreign_rate = remainder/money
         if remainder > 0:
-            remainder = remainder/rates[currency][0]
-            return f"На сегодня осталось {remainder:.2f} {rates[currency][1]}"
-        elif remainder == 0:
-            return ("Денег нет, держись")
-        remainder = abs(remainder/rates[currency][0])
+            remainder = foreign_rate
+            return f"На сегодня осталось {remainder:.2f} {rate}"
+        if remainder == 0:
+            return "Денег нет, держись"
+        remainder = abs(foreign_rate)
         return ("Денег нет, держись: твой долг -"
-                f" {remainder:.2f} {rates[currency][1]}")
+                f" {remainder:.2f} {rate}")
 
 
 class CaloriesCalculator(Calculator):
