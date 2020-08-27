@@ -17,7 +17,6 @@ class Calculator:
     def __init__(self, limit):
         self.limit = limit
         self.records = []
-        self.today = dt.date.today()
 
     def add_record(self, record):
         self.records.append(record)
@@ -28,12 +27,14 @@ class Calculator:
                    date_begin >= record_i.date >= date_end)
 
     def get_today_stats(self):
-        date_end = self.today - dt.timedelta(days=0)
-        return self.sum_amounts(self.today, date_end)
+        today = dt.date.today()
+        date_end = today
+        return self.sum_amounts(today, date_end)
 
     def get_week_stats(self):
-        date_week = self.today - dt.timedelta(days=6)
-        return self.sum_amounts(self.today, date_week)
+        today = dt.date.today()
+        date_week = today - dt.timedelta(days=6)
+        return self.sum_amounts(today, date_week)
 
     def remainder_on(self):
         return self.limit - self.get_today_stats()
@@ -50,12 +51,12 @@ class CashCalculator(Calculator):
             "eur": (self.EURO_RATE, "Euro"),
             "usd": (self.USD_RATE, "USD")
             }
-        money, rate = (rates[currency][0], rates[currency][1])
+        money, rate = rates[currency]
         foreign_rate = remainder/money
         if remainder > 0:
             remainder = foreign_rate
             return f"На сегодня осталось {remainder:.2f} {rate}"
-        if remainder == 0:
+        if self.limit == self.get_today_stats():
             return "Денег нет, держись"
         remainder = abs(foreign_rate)
         return ("Денег нет, держись: твой долг -"
