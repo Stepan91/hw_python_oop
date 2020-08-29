@@ -28,9 +28,8 @@ class Calculator:
 
     def get_today_stats(self):
         today = dt.date.today()
-        date_end = today
-        return self.sum_amounts(today, date_end)
-
+        return self.sum_amounts(today, today)
+        
     def get_week_stats(self):
         today = dt.date.today()
         date_week = today - dt.timedelta(days=6)
@@ -46,6 +45,8 @@ class CashCalculator(Calculator):
 
     def get_today_cash_remained(self, currency):
         remainder = self.remainder_on()
+        if remainder == 0:
+            return "Денег нет, держись"
         rates = {
             "rub": (1, "руб"),
             "eur": (self.EURO_RATE, "Euro"),
@@ -56,8 +57,6 @@ class CashCalculator(Calculator):
         if remainder > 0:
             remainder = foreign_rate
             return f"На сегодня осталось {remainder:.2f} {rate}"
-        if self.limit == self.get_today_stats():
-            return "Денег нет, держись"
         remainder = abs(foreign_rate)
         return ("Денег нет, держись: твой долг -"
                 f" {remainder:.2f} {rate}")
